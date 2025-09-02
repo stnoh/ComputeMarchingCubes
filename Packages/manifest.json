@@ -9,8 +9,9 @@
     }
   ],
   "dependencies": {
-    "com.unity.modules.uielements": "1.0.0",
+    "com.unity.ide.visualstudio": "2.0.23",
     "jp.keijiro.klak.math": "2.1.0",
-    "jp.keijiro.noiseshader": "2.0.0"
+    "jp.keijiro.noiseshader": "2.0.0",
+    "com.unity.modules.uielements": "1.0.0"
   }
 }
