@@ -2,13 +2,15 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Unity.Properties;
 
+using System.IO;
+
 namespace MarchingCubes {
 
 sealed class VolumeDataVisualizer : MonoBehaviour
 {
     #region Editable attributes
 
-    [SerializeField] TextAsset _volumeData = null;
+    [SerializeField] string filepath = "./data/CThead.bytes";
     [SerializeField] Vector3Int _dimensions = new Vector3Int(256, 256, 113);
     [SerializeField] float _gridScale = 4.0f / 256;
     [SerializeField] int _triangleBudget = 65536 * 16;
@@ -47,7 +49,10 @@ sealed class VolumeDataVisualizer : MonoBehaviour
 
         // Voxel data conversion (ushort -> float)
         using var readBuffer = new ComputeBuffer(VoxelCount / 2, sizeof(uint));
-        readBuffer.SetData(_volumeData.bytes);
+
+        byte[] bytes = File.ReadAllBytes(filepath);
+
+        readBuffer.SetData(bytes);
 
         _converterCompute.SetInts("Dims", _dimensions);
         _converterCompute.SetBuffer(0, "Source", readBuffer);
