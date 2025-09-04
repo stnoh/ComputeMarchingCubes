@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using System.Threading.Tasks;
+
 namespace MarchingCubes {
 
 sealed class DynamicFieldVisualizer : MonoBehaviour
@@ -14,7 +16,7 @@ sealed class DynamicFieldVisualizer : MonoBehaviour
 
     #region Project asset references
 
-    [SerializeField, HideInInspector]  ComputeShader _builderCompute   = null;
+    [SerializeField, HideInInspector] ComputeShader _builderCompute   = null;
 
     #endregion
 
@@ -49,13 +51,16 @@ sealed class DynamicFieldVisualizer : MonoBehaviour
 
     void Update()
     {
-        // [TEMPORARY] idiotic way to compute voxel data
+        // compute voxel data from host (CPU)
         float sin_value = Mathf.Sin(m_speed * Time.realtimeSinceStartup);
 
-        for (int k = 0; k < _dimensions.z; k++)
-        for (int j = 0; j < _dimensions.y; j++)
-        for (int i = 0; i < _dimensions.x; i++)
+        // use Parallel.For for speedup
+        var result = Parallel.For(0, VoxelCount, (n, state) => 
         {
+            int k = n / (_dimensions.x * _dimensions.y);
+            int j = (n - k * _dimensions.x * _dimensions.y) / _dimensions.x;
+            int i = (n - k * _dimensions.x * _dimensions.y) % _dimensions.x;
+
             const float r = 0.35f;
             float x = (float)i / (float)_dimensions.z - 0.5f;
             float y = (float)j / (float)_dimensions.y - 0.5f;
@@ -64,8 +69,8 @@ sealed class DynamicFieldVisualizer : MonoBehaviour
             float val = r * r - (x * x + y * y + z * z) - 0.05f * sin_value;
             val = Mathf.Clamp(rescale * val, -1.0f, +1.0f);
 
-            voxelBufferCPU[i + j * _dimensions.x + k * _dimensions.x * _dimensions.y] = val;
-        }
+            voxelBufferCPU[n] = val;
+        });
         _voxelBuffer.SetData(voxelBufferCPU);
 
         // Isosurface reconstruction

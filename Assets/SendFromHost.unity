@@ -221,9 +221,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2289c1ea970fa674abe0a8285d1abbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MarchingCubes.DynamicFieldVisualizer
-  _dimensions: {x: 64, y: 64, z: 64}
-  _gridScale: 0.0625
-  _triangleBudget: 65536
+  _dimensions: {x: 128, y: 128, z: 128}
+  _gridScale: 0.03125
+  _triangleBudget: 262144
+  _converterCompute: {fileID: 7200000, guid: b549d4d8df045c045918af5bb34e1b4f, type: 3}
   _builderCompute: {fileID: 7200000, guid: 9f19ed91e8aa34430ac0ea80fb20eead, type: 3}
   m_speed: 2
 --- !u!1 &852991063
