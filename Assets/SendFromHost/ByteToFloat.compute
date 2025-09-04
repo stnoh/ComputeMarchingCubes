@@ -1,0 +1,24 @@
+#pragma kernel ByteToFloat
+
+uint3 Dims;
+ByteAddressBuffer Source;
+RWStructuredBuffer<float> Voxels;
+
+[numthreads(8, 8, 8)]
+void ByteToFloat(uint3 id : SV_DispatchThreadID)
+{
+    uint index = id.x + Dims.x * (id.y + Dims.y * id.z);
+
+    // Source voxel fetch: [0,1,2,3], [4,5,6,7], ... -> [0,0,0,0], [1,1,1,1], ...
+    uint data = asuint(Source.Load((index / 4) * 4));
+
+    switch (index % 4) {
+    case 0: data = ((data      ) & 0xff); break;
+    case 1: data = ((data >>  8) & 0xff); break;
+    case 2: data = ((data >> 16) & 0xff); break;
+    case 3: data = ((data >> 24) & 0xff); break;
+    }
+
+    // byte -> float
+    Voxels[index] = 1.0f * data / 0xff;
+}
