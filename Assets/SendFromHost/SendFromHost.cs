@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MarchingCubes {
 
-sealed class DynamicFieldVisualizer : MonoBehaviour
+sealed class SendFromHost : MonoBehaviour
 {
     #region Editable attributes
 
